@@ -1,0 +1,29 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Allow users to read/write their own user document
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Submissions: Allow user to create their own; admins can read
+    match /submissions/{submissionId} {
+      allow create: if request.auth != null &&
+        request.auth.token.email == request.resource.data.userEmail;
+
+      allow read: if request.auth != null &&
+        (request.auth.token.email == resource.data.userEmail ||
+         exists(/databases/$(database)/documents/admins/$(request.auth.token.email)));
+
+      allow list: if request.auth != null &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
+    }
+
+    // Admins collection
+    match /admins/{email} {
+      allow read, write: if request.auth != null &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
+    }
+  }
+}

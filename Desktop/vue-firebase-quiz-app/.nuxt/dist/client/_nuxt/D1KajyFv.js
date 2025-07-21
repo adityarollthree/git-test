@@ -1,0 +1,1 @@
+import{_ as t,s as a,g as i,q as o,$ as u}from"./DMWciSDP.js";const l=t((n,d)=>{const{user:e,isAdmin:s,loading:r}=a(i());if(!r.value){if(!e.value)return o("/login");if(!s.value)throw u({statusCode:403,statusMessage:"Access Denied: Admin privileges required"})}});export{l as default};
